@@ -3,7 +3,7 @@ module Main where
 main :: IO ()
 main = do
   contents <- getContents
-  let input = map read $ lines contents
+  let input = map read (lines contents)
   putStrLn "Part 1:"
   putStrLn $ show $ part1 $ input
   putStrLn "Part 2:"
@@ -23,5 +23,5 @@ accountForFuel a = accountForFuelTR (calculateFuel a) a
 
 accountForFuelTR :: Integer -> Integer -> Integer
 accountForFuelTR a b 
-    | a >= 0 = accountForFuelTR (calculateFuel a) (a + b)
+    | a > 0 = accountForFuelTR (calculateFuel a) (a + b)
     | otherwise = b

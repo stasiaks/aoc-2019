@@ -2,4 +2,7 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "hello world"
+  contents <- getContents
+  putStr $ show $ sum $ map (calculateFuel . read) (lines contents)
+
+calculateFuel a = floor (a / 3) - 2

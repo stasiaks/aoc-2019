@@ -1,22 +1,22 @@
 module Main where
 import Data.List.Split
-import Data.Array.ST
+import Data.Maybe
 
 main :: IO ()
 main = do
   contents <- getContents
   let input = map read (splitOn "," contents) :: [Int]
   putStrLn "Part 1:"
-  putStrLn $ show $ part1 $ input
+  putStrLn $ show $ fromJust $ part1 input -- I don't care much about safety here
 
-part1 xs = exec xs 0
+part1 xs = (exec xs 0) >>= \ys -> return (head ys)
 
-exec :: [Int] -> Int -> Either String [Int]
+exec :: [Int] -> Int -> Maybe [Int]
 exec xs n
-  | (value xs n) == 1  = exec (addition xs (n+1)) (n+4)       -- Addition
+  | (value xs n) == 1  = exec (addition       xs (n+1)) (n+4) -- Addition
   | (value xs n) == 2  = exec (multiplication xs (n+1)) (n+4) -- Mutliplication
-  | (value xs n) == 99 = Right xs                             -- Halt
-  | otherwise          = Left "UNEXCPECTED OPCODE"
+  | (value xs n) == 99 = Just xs                              -- Halt
+  | otherwise          = Nothing
 
 referenceValue :: [Int] -> Int -> Int
 referenceValue xs n = value xs $ value xs n

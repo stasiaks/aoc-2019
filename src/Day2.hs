@@ -5,7 +5,7 @@ import Data.Maybe
 main :: IO ()
 main = do
   contents <- getContents
-  let input = map read (splitOn "," contents) :: [Int]
+  let input = map read $ splitOn "," contents
   putStrLn "Part 1:"
   putStrLn $ show $ fromJust $ part1 input -- I don't care much about safety here
   putStrLn "Part 2:"
@@ -33,7 +33,7 @@ fill :: [Int] -> Int -> Int -> [Int]
 fill xs a b = (take a xs) ++ [b] ++ (drop (a+1) xs)
 
 operation :: [Int] -> Int -> (Int -> Int -> Int) -> [Int]
-operation xs a f = fill xs (value xs (a+2)) (f (referenceValue xs a) (referenceValue xs (a+1)))
+operation xs a f = fill xs (value xs (a+2)) $ f (referenceValue xs a) (referenceValue xs (a+1))
 
 exec :: [Int] -> Int -> Maybe [Int]
 exec xs n

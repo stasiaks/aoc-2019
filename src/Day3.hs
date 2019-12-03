@@ -1,5 +1,6 @@
 module Main where
 import Data.Char
+import Data.List
 import Data.List.Split
 import Data.Tuple.Strict
 
@@ -26,10 +27,13 @@ main = do
   contents <- getContents
   let input = tuplify $ map ((map (read :: String -> Movement)) . splitOn ",") (lines contents)
   putStrLn "Part 1:"
-  putStrLn $ show input
+  putStrLn $ show $ part1 input
 
 part1 :: ([Movement], [Movement]) -> Int
-part1 (xs, ys) = 1
+part1 (xs, ys) = minimum $ map (manhattanDistance start) $ intersect (coordinatesTouched xs [] start) (coordinatesTouched ys [] start)
+  where start = (0,0)
+
+manhattanDistance (x, y) (a, b) = (abs $ x - a) + (abs $ y - b)
 
 coordinatesTouched :: [Movement] -> [Coordinate] -> Coordinate -> [Coordinate]
 coordinatesTouched (m:ms) cs c = coordinatesTouched ms (newCoordinates ++ cs) (head newCoordinates)

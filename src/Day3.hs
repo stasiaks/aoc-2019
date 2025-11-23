@@ -4,10 +4,10 @@ import Data.List
 import Data.List.Split
 import Data.Tuple.Strict
 
+-- TODO: OPTIMIZE THE SHIT OUT OF IT
+
 data Direction = ToLeft | ToRight | Up | Down
-  deriving Show
 data Movement = Movement Direction Int
-  deriving Show
 type Coordinate = (Int, Int)
 
 instance Read Direction where
@@ -28,10 +28,25 @@ main = do
   let input = tuplify $ map ((map (read :: String -> Movement)) . splitOn ",") (lines contents)
   putStrLn "Part 1:"
   putStrLn $ show $ part1 input
+  putStrLn "Part 2:"
+  putStrLn $ show $ part2 input
 
 part1 :: ([Movement], [Movement]) -> Int
-part1 (xs, ys) = minimum $ map (manhattanDistance start) $ intersect (coordinatesTouched xs [] start) (coordinatesTouched ys [] start)
+part1 (xs, ys) = minimum $ map (manhattanDistance start) $ intersections
   where start = (0,0)
+        wire1 = coordinatesTouched xs [] start
+        wire2 = coordinatesTouched ys [] start
+        intersections = intersect wire1 wire2
+
+part2 :: ([Movement], [Movement]) -> Int
+part2 (xs, ys) = minimum $ zipWith (+) (routesLength wire1 intersections) (routesLength wire2 intersections)
+  where start = (0,0)
+        wire1 = coordinatesTouched xs [] start
+        wire2 = coordinatesTouched ys [] start
+        intersections = intersect wire1 wire2
+
+routesLength :: Eq a => [a] -> [a] -> [Int]
+routesLength cs is = map (length . \x -> dropWhile ((/=) x) cs) is
 
 manhattanDistance (x, y) (a, b) = (abs $ x - a) + (abs $ y - b)
 

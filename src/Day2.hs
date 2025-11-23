@@ -9,7 +9,11 @@ main = do
   putStrLn "Part 1:"
   putStrLn $ show $ fromJust $ part1 input -- I don't care much about safety here
 
-part1 xs = (exec xs 0) >>= \ys -> return (head ys)
+part1 :: [Int] -> Maybe Int
+part1 xs = (exec (alarm1202 xs) 0) >>= \ys -> return (head ys)
+
+alarm1202 :: [Int] -> [Int]
+alarm1202 xs = fill (fill xs 1 12) 2 2
 
 exec :: [Int] -> Int -> Maybe [Int]
 exec xs n

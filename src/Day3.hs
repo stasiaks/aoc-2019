@@ -1,12 +1,13 @@
 module Main where
+import Data.Char
 import Data.List.Split
 import Data.Tuple.Strict
-import Data.Char
 
 data Direction = ToLeft | ToRight | Up | Down
   deriving Show
 data Movement = Movement Direction Int
   deriving Show
+type Coordinate = (Int, Int)
 
 instance Read Direction where
   readsPrec _ input = case splitAt 1 input of
@@ -29,6 +30,20 @@ main = do
 
 part1 :: ([Movement], [Movement]) -> Int
 part1 (xs, ys) = 1
+
+coordinatesTouched :: [Movement] -> [Coordinate] -> Coordinate -> [Coordinate]
+coordinatesTouched (m:ms) cs c = coordinatesTouched ms (newCoordinates ++ cs) (head newCoordinates)
+  where newCoordinates = movementToCoordinates m [] c
+coordinatesTouched [] cs _ = cs
+
+movementToCoordinates :: Movement -> [Coordinate] -> Coordinate -> [Coordinate]
+movementToCoordinates (Movement _ 0) cs _ = cs
+movementToCoordinates (Movement dir n) cs (x,y) = movementToCoordinates (Movement dir (n-1)) (newCoordinate : cs) newCoordinate
+  where newCoordinate = case dir of
+          ToLeft  -> (x-1, y)
+          ToRight -> (x+1, y)
+          Up      -> (x, y+1)
+          Down    -> (x, y-1)
 
 tuplify :: [a] -> (a,a)
 tuplify [x,y] = (x,y)

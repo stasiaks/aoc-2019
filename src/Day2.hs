@@ -1,5 +1,8 @@
 module Main where
+import Data.List.Split
 
 main :: IO ()
 main = do
-  putStrLn "Day 2"
+  contents <- getContents
+  let input = map read (splitOn "," contents) :: [Integer]
+  putStrLn $ show input

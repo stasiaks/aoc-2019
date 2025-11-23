@@ -1,6 +1,9 @@
 module Main where
+import Data.Char
 import Data.List.Split
 import Data.Maybe
+
+data OperationCode = Addition | Multiplication | Halt | Error
 
 main :: IO ()
 main = do
@@ -35,9 +38,15 @@ fill xs a b = (take a xs) ++ [b] ++ (drop (a+1) xs)
 operation :: [Int] -> Int -> (Int -> Int -> Int) -> [Int]
 operation xs a f = fill xs (value xs (a+2)) $ f (referenceValue xs a) (referenceValue xs (a+1))
 
+readOperationCode :: Int -> OperationCode
+readOperationCode 1  = Addition
+readOperationCode 2  = Multiplication
+readOperationCode 99 = Halt
+readOperationCode _  = Error
+
 exec :: [Int] -> Int -> Maybe [Int]
-exec xs n
-  | (value xs n) == 1  = exec (operation xs (n+1) (+)) (n+4) -- Addition
-  | (value xs n) == 2  = exec (operation xs (n+1) (*)) (n+4) -- Mutliplication
-  | (value xs n) == 99 = Just xs                             -- Halt
-  | otherwise          = Nothing
+exec xs n = case readOperationCode $ value xs n of
+  Addition       -> exec (operation xs (n+1) (+)) (n+4)
+  Multiplication -> exec (operation xs (n+1) (*)) (n+4)
+  Halt           -> Just xs
+  Error          -> Nothing

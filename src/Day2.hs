@@ -8,12 +8,21 @@ main = do
   let input = map read (splitOn "," contents) :: [Int]
   putStrLn "Part 1:"
   putStrLn $ show $ fromJust $ part1 input -- I don't care much about safety here
+  putStrLn "Part 2:"
+  putStrLn $ show $ part2 input 
+
 
 part1 :: [Int] -> Maybe Int
-part1 xs = (exec (alarm1202 xs) 0) >>= \ys -> return (head ys)
+part1 xs = intcodeProgram xs 12 2
 
-alarm1202 :: [Int] -> [Int]
-alarm1202 xs = fill (fill xs 1 12) 2 2
+part2 :: [Int] -> Int
+part2 xs = head [ (100 * a) + b | a <- [0..99], b <- [0..99], intcodeProgram xs a b == Just 19690720]
+
+intcodeProgram :: [Int] -> Int -> Int -> Maybe Int
+intcodeProgram xs a b = exec (replaceInputs xs a b) 0 >>= \ys -> return (head ys)
+
+replaceInputs :: [Int] -> Int -> Int -> [Int]
+replaceInputs xs a b = fill (fill xs 1 a) 2 b
 
 exec :: [Int] -> Int -> Maybe [Int]
 exec xs n
